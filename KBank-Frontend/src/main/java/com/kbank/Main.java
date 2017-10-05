@@ -13,11 +13,11 @@ public class Main {
         }
         try {
             Connection connection = DriverManager.getConnection(
-                    "jdbc:://localhost/demo", "root", password);
+                    "jdbc:mysql://localhost/demo", "root", password);
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT name FROM persons;");
+            ResultSet resultSet = statement.executeQuery("SELECT firstName FROM person;");
             while(resultSet.next()) {
-                String name = resultSet.getString("name");
+                String name = resultSet.getString("firstName");
                 System.out.println(name);
 
             }
