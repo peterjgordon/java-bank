@@ -14,7 +14,7 @@ CREATE TABLE customers(
     firstName varchar(20) NOT NULL,
     lastName varchar(20) NOT NULL,
     dateOfBirth date NOT NULL,
-    gender char NOT NULL,
+    gender char(1) NOT NULL,
     address varchar(30) NOT NULL,
     phoneNumber varchar(12) NOT NULL,
     email varchar(25) NOT NULL,
