@@ -17,4 +17,4 @@ A bank management system allowing users to access their accounts.
 
 ## Loading the database
 
-Create the database by executing the 'create.sql' file.
+Create the database by executing `source create.sql` from the mysql shell.
