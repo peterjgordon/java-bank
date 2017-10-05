@@ -14,3 +14,7 @@ A bank management system allowing users to access their accounts.
 2. As a user, I want to be able to access my account using my account number so that I can see my account balance.
 	* Returning name, balance, account number
 	* New menu option to view balance
+
+## Loading the database
+
+Create the database by executing the 'create.sql' file.
