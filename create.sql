@@ -1,5 +1,6 @@
-CREATE DATABASE bankData;
-USE bankData;
+DROP DATABASE IF EXISTS kbank;
+CREATE DATABASE kbank;
+USE kbank;
 
 CREATE TABLE postcodes(
     postcode varchar(8) PRIMARY KEY,
