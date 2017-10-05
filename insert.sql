@@ -5,11 +5,11 @@ INSERT INTO TABLE postcodes VALUES ("L3 9RF", "England", "Liverpool", "Lancashir
 INSERT INTO TABLE postcodes VALUES ("M3 7GJ", "England", "London","Kent");
 
 
-INSERT INTO TABLE accounts() VALUES ();
-INSERT INTO TABLE accounts(balance) VALUES (89);
-INSERT INTO TABLE accounts(balance) VALUES (8);
-INSERT INTO TABLE accounts(balance) VALUES (456);
-INSERT INTO TABLE accounts(balance) VALUES (829)
+INSERT INTO TABLE accounts() VALUES ("2017/10/05");
+INSERT INTO TABLE accounts(balance) VALUES (89, "2017/10/04");
+INSERT INTO TABLE accounts(balance) VALUES (8, "2017/10/04");
+INSERT INTO TABLE accounts(balance) VALUES (456, "2017/10/03");
+INSERT INTO TABLE accounts(balance) VALUES (829, "2017/10/02");
 
 INSERT INTO TABLE customers VALUES ("Alex", "Robinson", "1970/06/24", 'm', "52 Old Edinburgh Road", "07758081437", "arob@gmail.com", "BT1 5DP");
 INSERT INTO TABLE customers VALUES ("Francesca", "Hanson", "1995/02/25", 'f', "15 Cunnery Rd", "07754356242", "fhanson@hotmail.com", "BT16 9IK");
