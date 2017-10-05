@@ -31,7 +31,7 @@ CREATE TABLE accounts(
 
 CREATE TABLE customers_accounts(
     customerID int,
-    accountNumber int,
+    accountNumber int(8) ZEROFILL NOT NULL,
     PRIMARY KEY (customerID, accountNumber),
     FOREIGN KEY (customerID) REFERENCES customers(id),
     FOREIGN KEY (accountNumber) REFERENCES accounts(accountNumber)
