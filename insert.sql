@@ -4,10 +4,10 @@ INSERT INTO postcodes VALUES ("BT1 1QF", "Northern Ireland", "Belfast", "Down");
 INSERT INTO postcodes VALUES ("L3 9RF", "England", "Liverpool", "Lancashire");
 INSERT INTO postcodes VALUES ("M3 7GJ", "England", "London", "Kent");
 
-INSERT INTO accounts VALUES (89, null, "2017/10/04");
-INSERT INTO accounts VALUES (8, null, "2017/10/04");
-INSERT INTO accounts VALUES (456, null, "2017/10/03");
-INSERT INTO accounts VALUES (829, null, "2017/10/02");
+INSERT INTO accounts VALUES (null, 89, "2017/10/04");
+INSERT INTO accounts VALUES (null, 8, "2017/10/04");
+INSERT INTO accounts VALUES (null, 456, "2017/10/03");
+INSERT INTO accounts VALUES (null, 829, "2017/10/02");
 
 INSERT INTO customers VALUES (null, "Alex", "Robinson", "1970/06/24", 'm', "52 Old Edinburgh Road", "07758081437", "arob@gmail.com", "BT1 5DP");
 INSERT INTO customers VALUES (null, "Francesca", "Hanson", "1995/02/25", 'f', "15 Cunnery Rd", "07754356242", "fhanson@hotmail.com", "BN7 0AH");
