@@ -15,9 +15,9 @@ CREATE TABLE customers(
     lastName varchar(20) NOT NULL,
     dateOfBirth date NOT NULL,
     gender char NOT NULL,
-    address varchar(20) NOT NULL,
+    address varchar(30) NOT NULL,
     phoneNumber varchar(12) NOT NULL,
-    email varchar(20) NOT NULL,
+    email varchar(25) NOT NULL,
     postcode varchar(8)  NOT NULL,
     FOREIGN KEY (postcode) REFERENCES postcodes(postcode)
 );
