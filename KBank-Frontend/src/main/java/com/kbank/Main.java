@@ -37,8 +37,8 @@ public class Main {
                     break;
                 //case 2:
                 //    break;
-                case 3:
-                    break;
+                //case 3:
+                //    break;
                 case 0:
                     System.exit(0);
                     break;
