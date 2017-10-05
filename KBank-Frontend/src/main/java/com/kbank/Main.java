@@ -132,7 +132,7 @@ public class Main {
         ResultSet[] results = new ResultSet[queries.length];
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank", "root", password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank?useSSL=false", "root", password);
             for (int i = 0; i < queries.length; i++) {
                 Statement statement = connection.createStatement();
                 results[i] = statement.executeQuery(queries[i]);
