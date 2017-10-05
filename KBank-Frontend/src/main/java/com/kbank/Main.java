@@ -54,8 +54,6 @@ public class Main {
     }
 
     private static void createAccount() {
-
-        System.out.println("SELECTION");
         System.out.println();
         System.out.print("First name: ");
         String firstName = scanner.nextLine();
@@ -82,7 +80,7 @@ public class Main {
         scanner.nextLine();
 
         ArrayList<String> queries = new ArrayList<String>();
-        queries.add("INSERT INTO customers(firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, postcode) VALUES('"+firstName+"', '"+lastName+"', '"+dob+"', '"+gender+"', '"+address+"', '"+phoneNo+"', '"+email+"', '"+postcode+"'); SELECT LAST_INSERT_ID();");
+        queries.add("INSERT INTO customers(firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, postcode) VALUES('"+firstName+"', '"+lastName+"', '"+dob+"', '"+gender+"', '"+address+"', '"+phoneNo+"', '"+email+"', '"+postcode+"');");
         queries.add("INSERT INTO accounts(balance) VALUES(" + deposit + ");");
         int[] results = sendToDB(queries.toArray(new String[queries.size()]), true);
         queries.clear();
@@ -91,7 +89,6 @@ public class Main {
         queries.add("INSERT INTO customers_accounts(customerID, accountNumber) VALUES(" + customerID + ", " + accountNo + ");");
         sendToDB(queries.toArray(new String[queries.size()]), false);
 
-        System.out.println("SELECTION");
         System.out.println("\nYour account has been created.");
     }
 
@@ -103,16 +100,14 @@ public class Main {
         int[] toReturn = new int[queries.length];
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank", "root", password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank?useSSL=false", "root", password);
             for (int i = 0; i < queries.length; i++) {
                 Statement statement = connection.createStatement();
                 toReturn[i] = statement.executeUpdate(queries[i]);
-                System.out.println("RETURNID="+returnID);
                 if(returnID) {
-                    System.out.println("SELECTION");
-                    ResultSet results = statement.executeQuery("SELECT last_insert_id() FROM accounts;");
+                    ResultSet results = statement.executeQuery("SELECT last_insert_id() AS lastID;");
                     results.next();
-                    toReturn[i] = results.getInt(0);
+                    toReturn[i] = Integer.parseInt(results.getString("lastID"));
                 }
             }
         } catch (SQLException e) {
