@@ -24,8 +24,9 @@ CREATE TABLE customers(
 CREATE TABLE accounts(
     accountNumber int(8) ZEROFILL AUTO_INCREMENT NOT NULL PRIMARY KEY,
     balance decimal(13,2) DEFAULT 0
-    --overdraft unsigned decimal(6,2) DEFAULT 0,
 );
+
+/*overdraft unsigned decimal(6,2) DEFAULT 0,*/
 
 CREATE TABLE customers_accounts(
     customerID int,
