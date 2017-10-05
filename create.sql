@@ -27,7 +27,7 @@ CREATE TABLE accounts(
     balance decimal(13,2) DEFAULT 0
 );
 
-/*overdraft unsigned decimal(6,2) DEFAULT 0,*/
+/*overdraft unsigned decimal(6,2) DEFAULT 0*/
 
 CREATE TABLE customers_accounts(
     customerID int,
@@ -41,13 +41,13 @@ CREATE TABLE customers_accounts(
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     value unsigned decimal(13,2) NOT NULL,
     accountNumber varchar(8) NOT NULL,
-    transferDate date,
+    transferDate date
 );
 
 CREATE TABLE withdrawals(
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     value unsigned decimal(13,2) NOT NULL,
     accountNumber varchar(8) NOT NULL,
-    transferDate date,
+    transferDate date
 );*/
 
