@@ -17,4 +17,5 @@ A bank management system allowing users to access their accounts.
 
 ## Loading the database
 
-Create the database by executing `source create.sql` from the mysql shell.
+Create the database by executing `source create.sql` in the mysql shell from the two-hands-no-friends directory.
+Then run Main.java in two-hands-no-friends/KBank-Frontend/src/main/java/com.kbank with the command line argument `password`.
