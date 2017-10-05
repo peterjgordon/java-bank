@@ -15,16 +15,17 @@ CREATE TABLE customers(
     lastName varchar(20) NOT NULL,
     dateOfBirth date NOT NULL,
     gender char NOT NULL,
-    address varchar(20) NOT NULL,
+    address varchar(30) NOT NULL,
     phoneNumber varchar(12) NOT NULL,
-    email varchar(20) NOT NULL,
+    email varchar(25) NOT NULL,
     postcode varchar(8)  NOT NULL,
     FOREIGN KEY (postcode) REFERENCES postcodes(postcode)
 );
 
 CREATE TABLE accounts(
     accountNumber int(8) ZEROFILL AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    balance decimal(13,2) DEFAULT 0
+    balance decimal(13,2) DEFAULT 0,
+dateOfCreation date
 );
 
 /*overdraft unsigned decimal(6,2) DEFAULT 0*/
