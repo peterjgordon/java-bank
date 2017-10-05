@@ -1,4 +1,3 @@
-DROP DATABASE bankData;
 CREATE DATABASE bankData;
 USE bankData;
 
@@ -6,7 +5,7 @@ CREATE TABLE postcodes(
     postcode varchar(8) PRIMARY KEY,
     country varchar(20) NOT NULL,
     town varchar(20) NOT NULL,
-    county varchar(20) NOT NULL,
+    county varchar(20) NOT NULL
 );
 
 CREATE TABLE customers(
@@ -19,12 +18,12 @@ CREATE TABLE customers(
     phoneNumber varchar(12) NOT NULL,
     email varchar(20) NOT NULL,
     postcode varchar(8)  NOT NULL,
-    FOREIGN KEY (postcode) REFERENCES postcodes(postcode),
+    FOREIGN KEY (postcode) REFERENCES postcodes(postcode)
 );
 
 CREATE TABLE accounts(
     accountNumber int(8) ZEROFILL AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    balance decimal(13,2) DEFAULT 0,
+    balance decimal(13,2) DEFAULT 0
     --overdraft unsigned decimal(6,2) DEFAULT 0,
 );
 
@@ -33,7 +32,7 @@ CREATE TABLE customers_accounts(
     accountNumber int,
     PRIMARY KEY (customerID, accountNumber),
     FOREIGN KEY (customerID) REFERENCES customers(id),
-    FOREIGN KEY (accountNumber) REFERENCES accounts(accountNumber),
+    FOREIGN KEY (accountNumber) REFERENCES accounts(accountNumber)
 );
 
 /*CREATE TABLE deposits(
