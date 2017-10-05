@@ -14,3 +14,10 @@ INSERT INTO customers VALUES (null, "Francesca", "Hanson", "1995/02/25", 'f', "1
 INSERT INTO customers VALUES (null, "Nicole", "Carpenter", "1987/03/17", 'f', "59 Petworth Rd", "07817318863", "ncarp@outlook.com", "BT1 1QF");
 INSERT INTO customers VALUES (null, "Finlay", "Clark", "1977/06/06", 'm', "24 Princes Street", "07010123183", "finlayc@live.co.uk", "L3 9RF");
 INSERT INTO customers VALUES (null, "Evie", "Lord", "1982/01/30", 'f', "12 Nenthead Road", "07963731473", "elord@gmail.com", "M3 7GJ");
+
+INSERT INTO customers_accounts VALUES (1, 1);
+INSERT INTO customers_accounts VALUES (2, 2);
+INSERT INTO customers_accounts VALUES (3, 3);
+INSERT INTO customers_accounts VALUES (4, 4);
+
+
