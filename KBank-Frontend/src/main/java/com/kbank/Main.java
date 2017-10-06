@@ -2,8 +2,6 @@ package com.kbank;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -24,7 +22,7 @@ public class Main {
 
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
-            //System.out.println("2. Log in to account");
+            System.out.println("2. View balance");
             System.out.println("\n0. Exit");
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
@@ -38,9 +36,9 @@ public class Main {
                 case 1:
                     createAccount();
                     break;
-                //case 2:
-                //    viewAccount();
-                //    break;
+                case 2:
+                    viewBalance();
+                    break;
                 //case 3:
                 //    break;
                 case 0:
@@ -57,7 +55,6 @@ public class Main {
     }
 
     private static void createAccount() {
-        System.out.println();
         System.out.print("First name:   ");
         String firstName = getValidLine();
         System.out.print("Last name:    ");
@@ -93,8 +90,8 @@ public class Main {
         System.out.print("Postcode:     ");
         while (postcode == null) {
             postcode = scanner.nextLine();
-            ArrayList<Object[]> rows = DB.get("SELECT count(*) FROM postcodes WHERE postcode = '"+postcode+"';");
-            if ((Long)rows.get(0)[0] == 0) {
+            ArrayList<Object[]> rows = DB.get("SELECT count(*) FROM postcodes WHERE postcode = '" + postcode + "';");
+            if ((Long) rows.get(0)[0] == 0) {
                 System.out.println("This is not a valid postcode.");
                 postcode = null;
             }
@@ -103,23 +100,23 @@ public class Main {
         String phoneNo = getValidLine(0);
         System.out.print("Email:        ");
         String email = getValidLine("@");
-        BigDecimal deposit = new BigDecimal(-1);
-        System.out.print("How much is your initial deposit? [0-1000]\n£");
-        while (deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
+        BigDecimal balance = new BigDecimal(-1);
+        System.out.print("How much is your initial balance? [0-1000]\n£");
+        while (balance.compareTo(BigDecimal.ZERO) < 0 || balance.compareTo(new BigDecimal(1000)) > 0) {
             while (!scanner.hasNextBigDecimal()) if (scanner.hasNext()) {
                 scanner.nextLine();
             }
-            deposit = scanner.nextBigDecimal();
+            balance = scanner.nextBigDecimal();
 
-            if (deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
-                System.out.print("Your deposit amount must be between £0 and £1000\n£");
+            if (balance.compareTo(BigDecimal.ZERO) < 0 || balance.compareTo(new BigDecimal(1000)) > 0) {
+                System.out.print("Your balance amount must be between £0 and £1000\n£");
             }
         }
         scanner.nextLine();
 
         ArrayList<String> queries = new ArrayList<String>();
         queries.add("INSERT INTO customers(firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, postcode) VALUES('" + firstName + "', '" + lastName + "', '" + dob + "', '" + gender + "', '" + address + "', '" + phoneNo + "', '" + email + "', '" + postcode + "');");
-        queries.add("INSERT INTO accounts(balance) VALUES(" + deposit + ");");
+        queries.add("INSERT INTO accounts(balance) VALUES(" + balance + ");");
         int[] results = DB.send(queries.toArray(new String[queries.size()]), true);
         queries.clear();
         int customerID = results[0];
@@ -128,10 +125,30 @@ public class Main {
         DB.send(queries.toArray(new String[queries.size()]), false);
 
         System.out.println("\nYour account has been created.");
+        System.out.println("Customer ID   : " + customerID);
+        System.out.println("Account Number: " + accountNo);
     }
 
-    private static void viewAccount() {
-
+    private static void viewBalance() {
+        System.out.print("Account Number: ");
+        Long accountNo = Long.parseLong(getValidLine(0));
+        ArrayList<Object[]> rows = DB.get("SELECT concat(c.firstName, ' ', c.lastName) as name, a.balance, a.accountNumber FROM accounts a " +
+                "JOIN customers_accounts ca ON a.accountNumber = ca.accountNumber " +
+                "JOIN customers c ON ca.customerID = c.id " +
+                "WHERE a.accountNumber = '" + accountNo + "'");
+        if (rows.size() == 0) {
+            System.out.println("Your account could not be found.");
+            return;
+        }
+        Object[] row = rows.get(0);
+        String name = (String) row[0];
+        BigDecimal balance = (BigDecimal) row[1];
+        accountNo = (Long) row[2];
+        System.out.println("\n========= YOUR ACCOUNT =========");
+        System.out.println("Name:       " + name);
+        System.out.println("Balance:    " + balance);
+        System.out.println("Account No: " + accountNo);
+        System.out.println("================================");
     }
 
     public static String getValidLine() {
@@ -143,17 +160,17 @@ public class Main {
         if (sample instanceof Integer) {
             pattern = Pattern.compile("^[0-9]+$"); // int
         }
-        if (sample instanceof String && ((String)sample).equals("@")) { // email
+        if (sample instanceof String && ((String) sample).equals("@")) { // email
             pattern = Pattern.compile("^[a-zA-Z0-9@.]+$");
         }
-        if (sample instanceof String && ((String)sample).equals("1 Street")) { // address
+        if (sample instanceof String && ((String) sample).equals("1 Street")) { // address
             pattern = Pattern.compile("^[a-zA-Z0-9,. \\-]+$");
         }
 
         String input = null;
         while (input == null) {
             input = scanner.nextLine();
-            if(input == null || !pattern.matcher(input).matches()) {
+            if (input == null || !pattern.matcher(input).matches()) {
                 System.out.println("Your input is invalid, please try again.");
                 input = null;
             }
