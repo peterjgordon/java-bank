@@ -25,10 +25,9 @@ CREATE TABLE customers(
 CREATE TABLE accounts(
     accountNumber int(8) ZEROFILL AUTO_INCREMENT NOT NULL PRIMARY KEY,
     balance decimal(13,2) DEFAULT 0,
-    dateOfCreation date
+    dateOfCreation date,
+    overdraft decimal(7,2) DEFAULT 0 NOT NULL
 );
-
-/*overdraft unsigned decimal(6,2) DEFAULT 0*/
 
 CREATE TABLE customers_accounts(
     customerID int,
@@ -37,18 +36,3 @@ CREATE TABLE customers_accounts(
     FOREIGN KEY (customerID) REFERENCES customers(id),
     FOREIGN KEY (accountNumber) REFERENCES accounts(accountNumber)
 );
-
-/*CREATE TABLE deposits(
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    value unsigned decimal(13,2) NOT NULL,
-    accountNumber varchar(8) NOT NULL,
-    transferDate date
-);
-
-CREATE TABLE withdrawals(
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    value unsigned decimal(13,2) NOT NULL,
-    accountNumber varchar(8) NOT NULL,
-    transferDate date
-);*/
-
