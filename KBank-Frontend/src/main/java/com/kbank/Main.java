@@ -1,6 +1,7 @@
 package com.kbank;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +25,7 @@ public class Main {
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
             System.out.println("2. View balance");
+            System.out.println("3. Manage overdraft");
             System.out.println("4. Withdraw money");
             System.out.println("5. Delete your account");
             System.out.println("\n0. Exit");
@@ -42,8 +44,9 @@ public class Main {
                 case 2:
                     viewBalance();
                     break;
-                //case 3:
-                //    break;
+                case 3:
+                    manageOverdraft();
+                    break;
                 case 4:
                     withdrawMoney();
                     break;
@@ -263,6 +266,39 @@ public class Main {
     public static void clearScreen() {
         for (int i = 0; i < 1000; i++) {
             System.out.println("\n");
+        }
+    }
+
+    private static void manageOverdraft() {
+        System.out.print("Account Number:");
+        int accountNo = Integer.parseInt(getValidLine(0));
+        ArrayList<Object[]> rows = DB.get("SELECT overdraft FROM accounts WHERE accountNumber = " + accountNo + ";");
+        Object[] row = rows.get(0);
+        if (((BigDecimal)row[0]).compareTo(new BigDecimal(10000)) == 0) {
+            System.out.println("The overdraft limit is £10,000.");
+            return;
+        }
+        if (((BigDecimal)row[0]).compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("This account has an overdraft of £" + row[0] + ". Would you like to increase this? Y/N");
+            String reply;
+            do {
+                reply = getValidLine().toLowerCase();
+                if ("no".startsWith(reply) && !reply.equals("")) {
+                    return;
+                } else if (!"yes".startsWith(reply) || reply.equals("")) {
+                    System.out.println("Please enter Y or N.");
+                    reply = null;
+                }
+            } while (reply == null);
+        }
+        // increase overdraft
+        System.out.print("How much would you like your overdraft to be?\n£");
+        float overdraft = Float.parseFloat(getValidLine(0.1f));
+        if(((BigDecimal)row[0]).add(new BigDecimal(overdraft)).compareTo(new BigDecimal(10000)) < 0) {
+            DB.send("UPDATE accounts SET overdraft = "+overdraft+" WHERE accountNumber = "+accountNo, false);
+            System.out.println("Overdraft set successfully!");
+        } else {
+            System.out.println("Too much overdraft, please try agin.");
         }
     }
 }
