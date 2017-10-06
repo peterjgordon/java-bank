@@ -57,8 +57,8 @@ public class DB {
                 int columnCount = result.getMetaData().getColumnCount();
                 while(result.next()) {
                     Object[] row = new Object[columnCount];
-                    for (int j = 1; i <= columnCount; i++) {
-                        row[j - 1] = result.getObject(j); // Or even rs.getObject()
+                    for (int j = 0; j < columnCount; j++) {
+                        row[j] = result.getObject(j+1); // Or even rs.getObject()
                     }
                     rows.add(row);
                 }
