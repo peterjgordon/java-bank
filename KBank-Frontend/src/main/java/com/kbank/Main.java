@@ -203,7 +203,7 @@ public class Main {
     private static void deleteAccount() {
         System.out.println("Are you sure that you want to delete your account? Type 'yes or 'no'");
         String confirmation = getValidLine();
-        if (confirmation.equals("yes")) {
+        if ("yes".startsWith(confirmation.toLowerCase())) {
             System.out.println("To confirm that you wish to permanently delete your account, please enter your account number.");
             System.out.println("Account Number: ");
             Long accountNumber = Long.parseLong(getValidLine(0));
@@ -214,8 +214,12 @@ public class Main {
             }
             System.out.println("Your account " + accountNumber + " has been successfully deleted");
         }
-        else {
+        else if ("no".startsWith(confirmation.toLowerCase())){
             System.out.println("You have cancelled the deletion of your account.");
+        }
+        else {
+            System.out.println("Please enter either yes or no");
+            deleteAccount();
         }
     }
 
