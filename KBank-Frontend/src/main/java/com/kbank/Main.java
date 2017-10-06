@@ -68,11 +68,19 @@ public class Main {
                 System.out.println("Invalid date! Please try again.\n");
             }
         }
-        System.out.print("Gender:       ");
-        String rawGender = scanner.nextLine().toLowerCase();
-        char gender = 'f';
-        if ("male".startsWith(rawGender)) {
-            gender = 'm';
+        char gender = '\u0000';
+        while(gender == '\u0000') {
+            System.out.print("Gender:       ");
+            String rawGender = scanner.nextLine().toLowerCase();
+            if ("male".startsWith(rawGender)) {
+                gender = 'm';
+            }
+            else if ("female".startsWith(rawGender)) {
+                gender = 'f';
+            }
+            else {
+                System.out.println("Please enter 'male' or 'female' for gender.\n");
+            }
         }
         System.out.print("Address [house and street]: ");
         String address = scanner.nextLine();
