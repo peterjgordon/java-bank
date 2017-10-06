@@ -178,26 +178,35 @@ public class Main {
         BigDecimal balance = (BigDecimal) row[1];
         BigDecimal overdraft = (BigDecimal) row[2];
 
-        System.out.println("Hello, "+name+"!");
-        System.out.println("You have £"+balance+" in your account (£"+overdraft+" agreed overdraft)");
+        System.out.println("Hello, " + name + "!");
+        System.out.println("You have £" + balance + " in your account (£" + overdraft + " agreed overdraft)");
 
-        BigDecimal maxWithdrawal = balance.subtract(overdraft);
-        if(maxWithdrawal.compareTo(BigDecimal.ZERO) <= 0) {
+        BigDecimal maxWithdrawal = balance.add(overdraft);
+        if (maxWithdrawal.compareTo(BigDecimal.ZERO) <= 0) {
             System.out.println("You cannot withdraw any money from your account.");
             return;
         }
-        if(maxWithdrawal.compareTo(new BigDecimal(1000)) > 1000) {
+        if (maxWithdrawal.compareTo(new BigDecimal(1000)) > 1000) {
             maxWithdrawal = new BigDecimal(1000);
         }
-        System.out.println("You can withdraw up to £"+maxWithdrawal);
+        System.out.println("You can withdraw up to £" + maxWithdrawal);
 
-        System.out.print("\nEnter amount to withdraw: ");
-        int withdrawal = 0;
-               while(withdrawal == 0) {
-                   Integer.parseInt(getValidLine(0));
-               }
+        System.out.print("\nEnter amount to withdraw: £");
+        float withdrawal = 0;
+        while (withdrawal == 0) {
+            withdrawal = Float.parseFloat(getValidLine(0.1f));
+            if (withdrawal < 0 || new BigDecimal(withdrawal).compareTo(maxWithdrawal) > 0) {
+                withdrawal = 0;
+                System.out.print("That's too much. Enter an amount from £0.00 - £" + maxWithdrawal + "\n£");
+            }
+        }
 
-        if(with)
+        int rowsAffected = DB.send("UPDATE accounts SET balance = balance - " + withdrawal + " WHERE accountNumber = " + accountNo, false);
+        if (rowsAffected == 0) {
+            System.out.println("Your withdrawal could not be processed. Please try again later.");
+        } else {
+            System.out.println("You have withdrawn £" + withdrawal + " from your account.");
+        }
     }
 
     private static void deleteAccount() {
@@ -207,17 +216,15 @@ public class Main {
             System.out.println("To confirm that you wish to permanently delete your account, please enter your account number.");
             System.out.println("Account Number: ");
             Long accountNumber = Long.parseLong(getValidLine(0));
-            int rowsAffected = DB.send("DELETE FROM customers_accounts WHERE accountNumber = '"+accountNumber+"';", false);
+            int rowsAffected = DB.send("DELETE FROM customers_accounts WHERE accountNumber = '" + accountNumber + "';", false);
             if (rowsAffected == 0) {
                 System.out.println("Your account couldn't be deleted as you entered an invalid Account Number");
                 return;
             }
             System.out.println("Your account " + accountNumber + " has been successfully deleted");
-        }
-        else if ("no".startsWith(confirmation.toLowerCase())){
+        } else if ("no".startsWith(confirmation.toLowerCase())) {
             System.out.println("You have cancelled the deletion of your account.");
-        }
-        else {
+        } else {
             System.out.println("Please enter either yes or no");
             deleteAccount();
         }
@@ -231,6 +238,9 @@ public class Main {
         Pattern pattern = Pattern.compile("^[a-zA-Z]+$"); // string
         if (sample instanceof Integer) {
             pattern = Pattern.compile("^[0-9]+$"); // int
+        }
+        if (sample instanceof Float) {
+            pattern = Pattern.compile("^[0-9]+(.[0-9]+)?$"); // int
         }
         if (sample instanceof String && ((String) sample).equals("@")) { // email
             pattern = Pattern.compile("^[a-zA-Z0-9@.]+$");
