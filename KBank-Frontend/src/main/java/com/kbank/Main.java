@@ -1,6 +1,7 @@
 package com.kbank;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ public class Main {
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
             System.out.println("2. View balance");
+            System.out.println("3. Manage the overdraft on an existing account");
             System.out.println("\n0. Exit");
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
@@ -39,8 +41,9 @@ public class Main {
                 case 2:
                     viewBalance();
                     break;
-                //case 3:
-                //    break;
+                case 3:
+                    manageOverdraft();
+                    break;
                 case 0:
                     System.exit(0);
                     break;
@@ -182,5 +185,30 @@ public class Main {
         for (int i = 0; i < 1000; i++) {
             System.out.println("\n");
         }
+    }
+
+    private static void manageOverdraft() {
+        System.out.println("Please enter the account number for the account that you would like to manage the overdraft of;");
+        int input = Integer.parseInt(getValidLine(0));
+        ArrayList<Object[]> rows = DB.get("SELECT overdraft FROM accounts WHERE accountNumber = " + input + ";");
+        Object[] row = rows.get(0);
+        if (((BigDecimal)row[0]).compareTo(new BigDecimal(10000)) == 0) {
+            System.out.println("The overdraft limit is £10,000.");
+            return;
+        }
+        if (((BigDecimal)row[0]).compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("This account has an overdraft of £" + row[0] + ". Would you like to increase this? Y/N");
+            String yesNo;
+            do {
+                yesNo = scanner.nextLine().toLowerCase();
+                if ("no".startsWith(yesNo) && !yesNo.equals("")) {
+                    return;
+                } else if (!"yes".startsWith(yesNo) || yesNo.equals("")) {
+                    System.out.println("Please enter Y or N.");
+                    yesNo = null;
+                }
+            } while (yesNo == null);
+        }
+        increaseOverdraft();
     }
 }
