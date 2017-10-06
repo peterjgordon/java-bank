@@ -26,7 +26,22 @@ A bank management system allowing users to access their accounts.
 6. As a user, I want to be able to exit the system when I am done.
 7. [BONUS] As a user, I want to be to login with a username/password so that I don't have to remember my account number
 
-## Loading the database
+## Usage
 
-Create the database by executing `source create.sql` in the mysql shell from the two-hands-no-friends directory.
-Then run Main.java in two-hands-no-friends/KBank-Frontend/src/main/java/com.kbank with the command line argument `password`.
+1. Populate the database
+
+```
+$ mysql -uroot -ppassword
+mysql> source create.sql
+mysql> source insert.sql
+```
+2. Build and run the project
+
+```
+$ cd KBank-Frontend
+$ mvn clean package
+$ cd target/classes/com/kbank
+$ java Main
+```
+However, it is recommended you should use an IDE like IntelliJ.
+Use the `KBank-Frontend` folder as the project root and import as a Maven project.
