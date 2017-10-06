@@ -1,17 +1,15 @@
 package com.kbank;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Main {
-    private static String password;
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        password = args[0];
-
         try {
             Class driver = Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -23,6 +21,7 @@ public class Main {
 
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
+            //System.out.println("2. Log in to account");
             System.out.println("\n0. Exit");
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
@@ -36,6 +35,7 @@ public class Main {
                     createAccount();
                     break;
                 //case 2:
+                //    viewAccount();
                 //    break;
                 //case 3:
                 //    break;
@@ -50,105 +50,66 @@ public class Main {
             System.out.print("\nPress enter to return to the main menu...");
             scanner.nextLine();
         }
-
     }
 
     private static void createAccount() {
         System.out.println();
-        System.out.print("First name: ");
-        String firstName = scanner.nextLine();
-        System.out.print("Last name:  ");
+        System.out.print("First name:   ");
+        String firstName = getValidLine();
+        System.out.print("Last name:    ");
         String lastName = scanner.nextLine();
-        System.out.print("Date of Birth [yyyy-mm-dd]: ");
-        Date dob = Date.valueOf(scanner.nextLine());
-        System.out.print("Gender: ");
+        Date dob = null;
+        while(dob==null) {
+            System.out.print("Date of Birth [yyyy-mm-dd]: ");
+            try {
+                dob = Date.valueOf(scanner.nextLine());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid date! Please try again.\n");
+            }
+        }
+        System.out.print("Gender:       ");
         String rawGender = scanner.nextLine().toLowerCase();
         char gender = 'f';
-        if("male".startsWith(rawGender)) {
+        if ("male".startsWith(rawGender)) {
             gender = 'm';
         }
         System.out.print("Address [house and street]: ");
         String address = scanner.nextLine();
-        System.out.print("Postcode: ");
+        System.out.print("Postcode:     ");
         String postcode = scanner.nextLine();
         System.out.print("Phone Number: ");
         String phoneNo = scanner.nextLine();
         System.out.print("Email:        ");
         String email = scanner.nextLine();
         System.out.println("How much is your initial deposit?");
+        while(!scanner.hasNextBigDecimal()) if(scanner.hasNext()) scanner.nextLine();
         BigDecimal deposit = scanner.nextBigDecimal();
         scanner.nextLine();
 
         ArrayList<String> queries = new ArrayList<String>();
-        queries.add("INSERT INTO customers(firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, postcode) VALUES('"+firstName+"', '"+lastName+"', '"+dob+"', '"+gender+"', '"+address+"', '"+phoneNo+"', '"+email+"', '"+postcode+"');");
+        queries.add("INSERT INTO customers(firstName, lastName, dateOfBirth, gender, address, phoneNumber, email, postcode) VALUES('" + firstName + "', '" + lastName + "', '" + dob + "', '" + gender + "', '" + address + "', '" + phoneNo + "', '" + email + "', '" + postcode + "');");
         queries.add("INSERT INTO accounts(balance) VALUES(" + deposit + ");");
-        int[] results = sendToDB(queries.toArray(new String[queries.size()]), true);
+        int[] results = DB.send(queries.toArray(new String[queries.size()]), true);
         queries.clear();
         int customerID = results[0];
         int accountNo = results[1];
         queries.add("INSERT INTO customers_accounts(customerID, accountNumber) VALUES(" + customerID + ", " + accountNo + ");");
-        sendToDB(queries.toArray(new String[queries.size()]), false);
+        DB.send(queries.toArray(new String[queries.size()]), false);
 
         System.out.println("\nYour account has been created.");
     }
 
-    public static int sendToDB(String query, boolean returnID) {
-        return sendToDB(new String[]{query}, returnID)[0];
+    private static void viewAccount() {
+
     }
 
-    public static int[] sendToDB(String[] queries, boolean returnID) {
-        int[] toReturn = new int[queries.length];
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank?useSSL=false", "root", password);
-            for (int i = 0; i < queries.length; i++) {
-                Statement statement = connection.createStatement();
-                toReturn[i] = statement.executeUpdate(queries[i]);
-                if(returnID) {
-                    ResultSet results = statement.executeQuery("SELECT last_insert_id() AS lastID;");
-                    results.next();
-                    toReturn[i] = Integer.parseInt(results.getString("lastID"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+    private static String getValidLine() {
+        Pattern pattern = Pattern.compile("^[a-zA-Z]+$");
+        String input = null;
+        while(input==null || !pattern.matcher(input).matches()) {
+            input = scanner.nextLine();
         }
-        return toReturn;
-    }
-
-    public static ResultSet getFromDB(String query) {
-        return getFromDB(new String[]{query})[0];
-    }
-
-    public static ResultSet[] getFromDB(String[] queries) {
-        ResultSet[] results = new ResultSet[queries.length];
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/kbank?useSSL=false", "root", password);
-            for (int i = 0; i < queries.length; i++) {
-                Statement statement = connection.createStatement();
-                results[i] = statement.executeQuery(queries[i]);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return results;
+        return input;
     }
 
     public static void clearScreen() {
