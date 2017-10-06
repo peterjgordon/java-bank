@@ -2,7 +2,10 @@ package com.kbank;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -26,7 +29,7 @@ public class Main {
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
 
-            while(!scanner.hasNextInt()) if(scanner.hasNext()) scanner.nextLine();
+            while (!scanner.hasNextInt()) if (scanner.hasNext()) scanner.nextLine();
             int input = scanner.nextInt();
             scanner.nextLine(); // skip next new line after int
             clearScreen();
@@ -60,44 +63,56 @@ public class Main {
         System.out.print("Last name:    ");
         String lastName = getValidLine();
         Date dob = null;
-        while(dob==null) {
-            System.out.print("Date of Birth [yyyy-mm-dd]: ");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        java.util.Date today = calendar.getTime();
+        System.out.print("Date of Birth [yyyy-mm-dd]: ");
+        while (dob == null || dob.after(today)) {
             try {
                 dob = Date.valueOf(scanner.nextLine());
             } catch (IllegalArgumentException e) {
-                System.out.println("Invalid date! Please try again.\n");
+                System.out.println("Invalid date! Please try again.");
             }
         }
         char gender = '\u0000';
-        while(gender == '\u0000') {
-            System.out.print("Gender:       ");
+        System.out.print("Gender:       ");
+        while (gender == '\u0000') {
             String rawGender = scanner.nextLine().toLowerCase();
-            if ("male".startsWith(rawGender)) {
+            if ("male".startsWith(rawGender) && !rawGender.equals("")) {
                 gender = 'm';
-            }
-            else if ("female".startsWith(rawGender)) {
+            } else if ("female".startsWith(rawGender) && !rawGender.equals("")) {
                 gender = 'f';
-            }
-            else {
-                System.out.println("Please enter 'male' or 'female' for gender.\n");
+            } else {
+                System.out.println("Please enter 'male' or 'female' for gender.");
+                gender = '\u0000';
             }
         }
         System.out.print("Address [house and street]: ");
-        String address = scanner.nextLine();
+        String address = getValidLine("1 Street");
+        String postcode = null;
         System.out.print("Postcode:     ");
-        String postcode = scanner.nextLine();
+        while (postcode == null) {
+            postcode = scanner.nextLine();
+            ArrayList<Object[]> rows = DB.get("SELECT count(*) FROM postcodes WHERE postcode = '"+postcode+"';");
+            if ((Long)rows.get(0)[0] == 0) {
+                System.out.println("This is not a valid postcode.");
+                postcode = null;
+            }
+        }
         System.out.print("Phone Number [no international numbers, no spaces]: ");
-        String phoneNo = getValidLine(Integer.class);
+        String phoneNo = getValidLine(0);
         System.out.print("Email:        ");
-        String email = scanner.nextLine();
+        String email = getValidLine("@");
         BigDecimal deposit = new BigDecimal(-1);
+        System.out.print("How much is your initial deposit? [0-1000]\n£");
         while (deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
-            System.out.print("How much is your initial deposit? [0-1000]\n£");
-            while (!scanner.hasNextBigDecimal()) if (scanner.hasNext()) scanner.nextLine();
+            while (!scanner.hasNextBigDecimal()) if (scanner.hasNext()) {
+                scanner.nextLine();
+            }
             deposit = scanner.nextBigDecimal();
 
-            if(deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
-                System.out.println("Your deposit amount must be between £0 and £1000");
+            if (deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
+                System.out.print("Your deposit amount must be between £0 and £1000\n£");
             }
         }
         scanner.nextLine();
@@ -119,18 +134,29 @@ public class Main {
 
     }
 
-    private static String getValidLine() {
+    public static String getValidLine() {
         return getValidLine(String.class);
     }
-    private static String getValidLine(Class type) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z]+$");
-        if(type==Integer.class) {
-            pattern = Pattern.compile("^[0-9]+$");
+
+    public static String getValidLine(Object sample) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z]+$"); // string
+        if (sample instanceof Integer) {
+            pattern = Pattern.compile("^[0-9]+$"); // int
+        }
+        if (sample instanceof String && ((String)sample).equals("@")) { // email
+            pattern = Pattern.compile("^[a-zA-Z0-9@.]+$");
+        }
+        if (sample instanceof String && ((String)sample).equals("1 Street")) { // address
+            pattern = Pattern.compile("^[a-zA-Z0-9,. \\-]+$");
         }
 
         String input = null;
-        while(input==null || !pattern.matcher(input).matches()) {
+        while (input == null) {
             input = scanner.nextLine();
+            if(input == null || !pattern.matcher(input).matches()) {
+                System.out.println("Your input is invalid, please try again.");
+                input = null;
+            }
         }
         return input;
     }

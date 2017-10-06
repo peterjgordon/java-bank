@@ -1,6 +1,7 @@
 package com.kbank;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DB {
     private static String url = "jdbc:mysql://localhost/kbank?useSSL=false";
@@ -38,18 +39,31 @@ public class DB {
         return toReturn;
     }
 
-    public static ResultSet get(String query) {
-        return get(new String[]{query})[0];
+    public static ArrayList<Object[]> get(String query) {
+        return get(new String[]{query}).get(0);
     }
 
-    public static ResultSet[] get(String[] queries) {
-        ResultSet[] results = new ResultSet[queries.length];
+    public static ArrayList<ArrayList<Object[]>> get(String[] queries) {
+        ArrayList<ArrayList<Object[]>> results = new ArrayList<ArrayList<Object[]>>();
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(url, "root", password);
             for (int i = 0; i < queries.length; i++) {
                 Statement statement = connection.createStatement();
-                results[i] = statement.executeQuery(queries[i]);
+
+                ResultSet result = statement.executeQuery(queries[i]);
+
+                ArrayList<Object[]> rows = new ArrayList<Object[]>();
+                int columnCount = result.getMetaData().getColumnCount();
+                while(result.next()) {
+                    Object[] row = new Object[columnCount];
+                    for (int j = 1; i <= columnCount; i++) {
+                        row[j - 1] = result.getObject(j); // Or even rs.getObject()
+                    }
+                    rows.add(row);
+                }
+
+                results.add(rows);
             }
         } catch (SQLException e) {
             e.printStackTrace();
