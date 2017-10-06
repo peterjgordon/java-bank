@@ -58,7 +58,7 @@ public class Main {
         System.out.print("First name:   ");
         String firstName = getValidLine();
         System.out.print("Last name:    ");
-        String lastName = scanner.nextLine();
+        String lastName = getValidLine();
         Date dob = null;
         while(dob==null) {
             System.out.print("Date of Birth [yyyy-mm-dd]: ");
@@ -86,13 +86,20 @@ public class Main {
         String address = scanner.nextLine();
         System.out.print("Postcode:     ");
         String postcode = scanner.nextLine();
-        System.out.print("Phone Number: ");
-        String phoneNo = scanner.nextLine();
+        System.out.print("Phone Number [no international numbers, no spaces]: ");
+        String phoneNo = getValidLine(Integer.class);
         System.out.print("Email:        ");
         String email = scanner.nextLine();
-        System.out.println("How much is your initial deposit?");
-        while(!scanner.hasNextBigDecimal()) if(scanner.hasNext()) scanner.nextLine();
-        BigDecimal deposit = scanner.nextBigDecimal();
+        BigDecimal deposit = new BigDecimal(-1);
+        while (deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
+            System.out.print("How much is your initial deposit? [0-1000]\n£");
+            while (!scanner.hasNextBigDecimal()) if (scanner.hasNext()) scanner.nextLine();
+            deposit = scanner.nextBigDecimal();
+
+            if(deposit.compareTo(BigDecimal.ZERO) < 0 || deposit.compareTo(new BigDecimal(1000)) > 0) {
+                System.out.println("Your deposit amount must be between £0 and £1000");
+            }
+        }
         scanner.nextLine();
 
         ArrayList<String> queries = new ArrayList<String>();
@@ -113,7 +120,14 @@ public class Main {
     }
 
     private static String getValidLine() {
+        return getValidLine(String.class);
+    }
+    private static String getValidLine(Class type) {
         Pattern pattern = Pattern.compile("^[a-zA-Z]+$");
+        if(type==Integer.class) {
+            pattern = Pattern.compile("^[0-9]+$");
+        }
+
         String input = null;
         while(input==null || !pattern.matcher(input).matches()) {
             input = scanner.nextLine();
