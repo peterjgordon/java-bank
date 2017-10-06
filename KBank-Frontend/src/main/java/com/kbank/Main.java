@@ -12,6 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            @SuppressWarnings("unused")
             Class driver = Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -23,6 +24,7 @@ public class Main {
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
             System.out.println("2. View balance");
+            System.out.println("4. Withdraw money");
             System.out.println("5. Delete your account");
             System.out.println("\n0. Exit");
             System.out.println("=======================");
@@ -42,6 +44,9 @@ public class Main {
                     break;
                 //case 3:
                 //    break;
+                case 4:
+                    withdrawMoney();
+                    break;
                 case 5:
                     deleteAccount();
                     break;
@@ -153,6 +158,46 @@ public class Main {
         System.out.println("Balance:    " + balance);
         System.out.println("Account No: " + accountNo);
         System.out.println("================================");
+    }
+
+    private static void withdrawMoney() {
+        System.out.print("Account Number: ");
+        Long accountNo = Long.parseLong(getValidLine(0));
+        ArrayList<Object[]> rows = DB.get("SELECT concat(c.firstName, ' ', c.lastName) as name, a.balance, a.overdraft FROM accounts a " +
+                "JOIN customers_accounts ca ON a.accountNumber = ca.accountNumber " +
+                "JOIN customers c ON ca.customerID = c.id " +
+                "WHERE a.accountNumber = '" + accountNo + "'");
+
+        if (rows.size() == 0) {
+            System.out.println("Your account could not be found.");
+            return;
+        }
+
+        Object[] row = rows.get(0);
+        String name = (String) row[0];
+        BigDecimal balance = (BigDecimal) row[1];
+        BigDecimal overdraft = (BigDecimal) row[2];
+
+        System.out.println("Hello, "+name+"!");
+        System.out.println("You have £"+balance+" in your account (£"+overdraft+" agreed overdraft)");
+
+        BigDecimal maxWithdrawal = balance.subtract(overdraft);
+        if(maxWithdrawal.compareTo(BigDecimal.ZERO) <= 0) {
+            System.out.println("You cannot withdraw any money from your account.");
+            return;
+        }
+        if(maxWithdrawal.compareTo(new BigDecimal(1000)) > 1000) {
+            maxWithdrawal = new BigDecimal(1000);
+        }
+        System.out.println("You can withdraw up to £"+maxWithdrawal);
+
+        System.out.print("\nEnter amount to withdraw: ");
+        int withdrawal = 0;
+               while(withdrawal == 0) {
+                   Integer.parseInt(getValidLine(0));
+               }
+
+        if(with)
     }
 
     private static void deleteAccount() {
