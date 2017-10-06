@@ -14,6 +14,17 @@ A bank management system allowing users to access their accounts.
 2. As a user, I want to be able to access my account using my account number so that I can see my account balance.
 	* Returning name, balance, account number
 	* New menu option to view balance
+3. As a user, I want to be able to add an overdraft to my acount to be able to have more money
+    * Overdraft limit of 10,000.
+    * If they already have an overdraft, offer an increase.
+4. As a user, I want to be able to withdraw money so that I can spend it on monster
+    * Each withdrawal must be recorded.
+    * Max withdrawal at once is 1000
+    * Withdrawal costs 1 pound
+    * Can't withdraw more than is already there
+5. As a user, I want to be able to close my acount as I won't need it anymore
+6. As a user, I want to be able to exit the system when I am done.
+7. [BONUS] As a user, I want to be to login with a username/password so that I don't have to remember my account number
 
 ## Loading the database
 
