@@ -26,6 +26,7 @@ public class Main {
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
 
+            while(!scanner.hasNextInt()) if(scanner.hasNext()) scanner.nextLine();
             int input = scanner.nextInt();
             scanner.nextLine(); // skip next new line after int
             clearScreen();
