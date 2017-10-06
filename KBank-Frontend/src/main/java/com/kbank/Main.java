@@ -23,6 +23,7 @@ public class Main {
             System.out.println("======== kBank ========");
             System.out.println("1. Create account");
             System.out.println("2. View balance");
+            System.out.println("5. Delete your account");
             System.out.println("\n0. Exit");
             System.out.println("=======================");
             System.out.print("Enter your choice: ");
@@ -41,6 +42,9 @@ public class Main {
                     break;
                 //case 3:
                 //    break;
+                case 5:
+                    deleteAccount();
+                    break;
                 case 0:
                     System.exit(0);
                     break;
@@ -149,6 +153,25 @@ public class Main {
         System.out.println("Balance:    " + balance);
         System.out.println("Account No: " + accountNo);
         System.out.println("================================");
+    }
+
+    private static void deleteAccount() {
+        System.out.println("Are you sure that you want to delete your account? Type 'yes or 'no'");
+        String confirmation = getValidLine();
+        if (confirmation.equals("yes")) {
+            System.out.println("To confirm that you wish to permanently delete your account, please enter your account number.");
+            System.out.println("Account Number: ");
+            Long accountNumber = Long.parseLong(getValidLine(0));
+            int rowsAffected = DB.send("DELETE FROM customers_accounts WHERE accountNumber = '"+accountNumber+"';", false);
+            if (rowsAffected == 0) {
+                System.out.println("Your account couldn't be deleted as you entered an invalid Account Number");
+                return;
+            }
+            System.out.println("Your account " + accountNumber + " has been successfully deleted");
+        }
+        else {
+            System.out.println("You have cancelled the deletion of your account.");
+        }
     }
 
     public static String getValidLine() {
